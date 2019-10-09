@@ -1,0 +1,90 @@
+C51 COMPILER V9.60.0.0   EEPROM                                                            08/02/2019 10:57:02 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE EEPROM
+OBJECT MODULE PLACED IN .\Objects\EEPRom.obj
+COMPILER INVOKED BY: D:\workdone\keil5\c51&arm\C51\BIN\C51.EXE Src\EEPRom.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND 
+                    -PRINT(.\Listings\EEPRom.lst) TABS(2) OBJECT(.\Objects\EEPRom.obj)
+
+line level    source
+
+   1          #include "EEPRom.h"
+*** WARNING C318 IN LINE 1 OF Src\EEPRom.c: can't open file 'EEPRom.h'
+   2          #include "Delay.h"
+*** WARNING C318 IN LINE 2 OF Src\EEPRom.c: can't open file 'Delay.h'
+   3          
+   4          sfr ISP_DATA  = 0xe2;
+   5          sfr ISP_ADDRH = 0xe3;
+   6          sfr ISP_ADDRL = 0xe4;
+   7          sfr ISP_CMD   = 0xe5;
+   8          sfr ISP_TRIG  = 0xe6;
+   9          sfr ISP_CONTR = 0xe7;
+  10          
+  11          #define EEPROM_START_ADDRESS 0x2000
+  12          
+  13          void EEPROMEnable(void)
+  14          {
+  15   1        ISP_CONTR |= 0x81;//Ê¹ÄÜ²¢ÉèÖÃºÃµÈ´ýÊ±¼ä
+  16   1      }
+  17          
+  18          void EEPROMDisable(void)
+  19          {
+  20   1        ISP_CONTR =0x00; //½ûÖ¹EEPROM
+  21   1        ISP_CMD   =0x00; //ÎÞISP²Ù×÷
+  22   1        ISP_TRIG  =0x00; //ÇåÁã
+  23   1        ISP_ADDRH =0x00; //ÇåÁã
+  24   1        ISP_ADDRL =0x00; //ÇåÁã
+  25   1      }
+  26          
+  27          void EEPROMSetAddress(unsigned int addr)
+  28          {
+  29   1        addr+=EEPROM_START_ADDRESS; //³õÊ¼»¯µØÖ·Îª0x2000
+  30   1        ISP_ADDRH=(unsigned char)(addr>>8); //ÉèÖÃ¶ÁÐ´µØÖ·¸ß×Ö½Ú
+  31   1        ISP_ADDRL=(unsigned char) addr; //ÉèÖÃ¶ÁÐ´µØÖ·µÍ×Ö½Ú
+  32   1      }
+  33          
+  34          void EEPROMStart(void)
+  35          {
+  36   1        ISP_TRIG=0x46;
+  37   1        ISP_TRIG=0xB9;
+  38   1      }
+  39          
+  40          unsigned char EEPROMReadByte(unsigned int addr)
+  41          {
+  42   1        ISP_DATA=0x00; //Çå¿ÕISP_DATA
+  43   1        ISP_CMD=0x01; //¶ÁÄ£Ê½
+  44   1        EEPROMEnable(); //EEPROM Ê¹ÄÜ
+  45   1        EEPROMSetAddress(addr); //ÉèÖÃEEPROMµØÖ·
+  46   1        EEPROMStart(); //EEPROM Æô¶¯
+  47   1        DelayUs(10); //¶ÁÈ¡Ò»¸ö×Ö½ÚÒª10us
+*** WARNING C206 IN LINE 47 OF Src\EEPRom.c: 'DelayUs': missing function-prototype
+*** ERROR C267 IN LINE 47 OF Src\EEPRom.c: 'DelayUs': requires ANSI-style prototype
+  48   1        EEPROMDisable(); //½ûÖ¹EEPROM
+  49   1        return (ISP_DATA); //·µ»Ø¶Áµ½µÄÊý¾Ý
+  50   1      }
+C51 COMPILER V9.60.0.0   EEPROM                                                            08/02/2019 10:57:02 PAGE 2   
+
+  51          
+  52          void EEPROMWriteByte(unsigned int addr,unsigned char byte)//ÏòEEPROMÖÐÐ´ÈëÒ»¸öByteµÄÊý¾Ý!!!ÔÚÄ³¸öÉÈÇøÐ´ÈëÊ
+             -ý¾ÝÖ®Ç°±ØÐëÏÈ²Á³ý¸ÃÉÈÇø
+  53          {
+  54   1        EEPROMEnable();
+  55   1        ISP_CMD=0x02;
+  56   1        EEPROMSetAddress(addr);
+  57   1        ISP_DATA=byte;
+  58   1        EEPROMStart();
+  59   1        DelayUs(60);
+  60   1        EEPROMDisable();
+  61   1      }
+  62          
+  63          void EEPROMSectorErase(unsigned int addr)//ÉÈÇø²Á³ý
+  64          {
+  65   1        ISP_CMD=0x03;
+  66   1        EEPROMEnable();
+  67   1        EEPROMSetAddress(addr);
+  68   1        EEPROMStart();
+  69   1        DelayMs(10);
+  70   1        EEPROMDisable();
+  71   1      }
+
+C51 COMPILATION COMPLETE.  3 WARNING(S),  1 ERROR(S)

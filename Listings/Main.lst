@@ -1,0 +1,106 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              10/09/2019 09:31:56 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\Main.obj
+COMPILER INVOKED BY: D:\workdone\keil5\c51&arm\C51\BIN\C51.EXE Src\Main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\Inc;.\Config
+                    -) DEBUG OBJECTEXTEND PRINT(.\Listings\Main.lst) TABS(2) OBJECT(.\Objects\Main.obj)
+
+line level    source
+
+   1          /************************************************************************************
+   2          *  Copyright (c), 2013, HelTec Automatic Technology co.,LTD.
+   3          *            All rights reserved.
+   4          *
+   5          * Http:    www.heltec.cn
+   6          * Email:   support@heltec.cn
+   7          * WebShop: heltec.taobao.com
+   8          *
+   9          * Processor: STC89C52
+  10          * Compiler : Keil C51 Compiler
+  11          * 
+  12          * Author : Heltec Automation
+  13          
+  14          * 
+  15          * Description: 128*64(or 132*64)点整OLED模块功能演示程序的主函数，仅适用heltec.taobao.com所售产品
+  16          *
+  17          * Others: none;
+  18          *
+  19          * Function List:
+  20          *
+  21          * 1. void delay(unsigned int z) -- 主函数中用于调整显示效果的延时函数,STC89C52 12MHZ z=1时大约延时1ms,其他
+             -频率需要自己计算
+  22          * 2. void main(void) -- 主函数
+  23          *
+  24          * History: none;
+  25          *
+  26          *************************************************************************************/
+  27          #include "OLED.h"
+  28          #include "Delay.h"
+  29          
+  30          void main(void) 
+  31          {
+  32   1      
+  33   1        unsigned char i;
+  34   1      
+  35   1        OLED_Init(); //OLED初始化  
+  36   1        while(1)
+  37   1        {
+  38   2      
+  39   2         OLED_Fill(0xff); //屏全亮
+  40   2          DelayS(1);
+  41   2          OLED_Fill(0x00); //屏全灭
+  42   2          DelayS(1);
+  43   2          if(INCH == 0)
+  44   2         {
+  45   3          OLED_ShowChar(0,0,"HelTecAutomation",1);
+  46   3          OLED_ShowChar(5,1,"HELLOWORLD",2);
+  47   3          OLED_ShowChar(5,4,"JUST DO TI",2);
+  48   3          OLED_ShowChar(34,7,"2018-08-2",1);    
+  49   3          DelayS(3);
+  50   3          OLED_CLS();
+  51   3          for(i=0; i<8; i++)//通过点整显示汉字 -- i表示字表数组的位置
+  52   3            {
+  53   4             OLED_ShowCN(i*16,0,i);
+C51 COMPILER V9.60.0.0   MAIN                                                              10/09/2019 09:31:56 PAGE 2   
+
+  54   4             OLED_ShowCN(i*16,2,i+8);
+  55   4            } 
+  56   3          DelayS(2);
+  57   3          OLED_CLS();
+  58   3          OLED_DrawBMP(0,0,132,8,BMP1);
+  59   3          
+  60   3        } 
+  61   2         
+  62   2        
+  63   2          if(INCH == 1)
+  64   2        {
+  65   3            for(i=2; i<6; i++)
+  66   3          {
+  67   4            OLED_ShowCN(i*16-8,4,i-2);
+  68   4             OLED_ShowCN(i*16+8,6,i+2);
+  69   4          }
+  70   3            DelayS(2);
+  71   3          OLED_CLS();//??
+  72   3          OLED_DrawBMP(32,4,96,8,BMP3);
+  73   3        }
+  74   2          DelayS(2);
+  75   2          OLED_CLS();//清屏
+  76   2        }
+  77   1        
+  78   1      }
+*** WARNING C294 IN LINE 65 OF Src\Main.c: unreachable code
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    192    ----
+   CONSTANT SIZE    =     49    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

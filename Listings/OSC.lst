@@ -1,0 +1,89 @@
+C51 COMPILER V9.60.0.0   OSC                                                               08/02/2019 10:57:02 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE OSC
+OBJECT MODULE PLACED IN .\Objects\OSC.obj
+COMPILER INVOKED BY: D:\workdone\keil5\c51&arm\C51\BIN\C51.EXE Src\OSC.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRI
+                    -NT(.\Listings\OSC.lst) TABS(2) OBJECT(.\Objects\OSC.obj)
+
+line level    source
+
+   1          /************************************************************************************
+   2          *  Copyright (c), 2015, HelTec Automation Technology co.,LTD.
+   3          *            All rights reserved.
+   4          *
+   5          * File name: OSC.c
+   6          * Project  : HelTec
+   7          * Processor: STC89C52
+   8          * Compiler : Keil C51 V9.52.0.0
+   9          * 
+  10          * Author : Aaron.Lee
+  11          * Version: 1.00
+  12          * Date   : 2014.3.24
+  13          * Email  : leehunter8801@gmail.com
+  14          * Modification: none
+  15          *
+  16          * Description: 超声波模块驱动程序;
+  17          *
+  18          * Others: none;
+  19          *
+  20          * Function List:
+  21          * 1. void OSC_Triger(void);//定时器0中断服务函数
+  22          * 2. void Count(void);//串口中断服务函数
+  23          * 3. float Distance(void);//主函数
+  24          *
+  25          *************************************************************************************/
+  26          
+  27          #include "OSC.h"
+*** WARNING C318 IN LINE 27 OF Src\OSC.c: can't open file 'OSC.h'
+  28          #include "Delay.h"
+*** WARNING C318 IN LINE 28 OF Src\OSC.c: can't open file 'Delay.h'
+  29          
+  30          sbit TRIG = P1^4; //正式工程时应该写到Config.h中
+*** ERROR C202 IN LINE 30 OF Src\OSC.c: 'P1': undefined identifier
+  31          sbit ECHO = P1^5;
+*** ERROR C202 IN LINE 31 OF Src\OSC.c: 'P1': undefined identifier
+  32          
+  33          /*触发一次*/
+  34          void OSC_Triger(void)
+  35          {
+  36   1        TRIG = 1;//给一个高电平，触发模块发出超声波信号
+*** ERROR C202 IN LINE 36 OF Src\OSC.c: 'TRIG': undefined identifier
+  37   1        DelayMs(800);
+  38   1        TRIG = 0;
+  39   1      }
+  40          
+  41          /********************************************
+  42          * 超声波模块发出信号时 -- 开始计数；
+  43          * 声波碰到物体返回模块时 -- 停止计数;
+  44          * 12MHz晶振，计数器每增加一次为1us.
+  45          ********************************************/
+  46          void Count(void)
+  47          {
+  48   1        while(!ECHO);//等待ECHO输出高电平
+  49   1        TR0 = 1;//开始计数高电平的持续时间
+C51 COMPILER V9.60.0.0   OSC                                                               08/02/2019 10:57:02 PAGE 2   
+
+  50   1        while(ECHO);//等待ECHO输出低电平，说明超声波信号碰到物体并已经返回
+  51   1        TR0 = 0;//计数器工作结束
+  52   1      }
+  53          
+  54          /*计算距离*/
+  55          float Distance(void)
+  56          {
+  57   1        unsigned int time;
+  58   1        float S;
+  59   1        
+  60   1        TH0 = 0;
+  61   1        TL0 = 0;//要的是计数,不是产生中断然后溢出,所以这里要给0
+  62   1        
+  63   1        OSC_Triger();
+  64   1        Count();
+  65   1        
+  66   1        time = TH0*256 + TL0;//time的最大值为18000，最远测3.1米
+  67   1        S = (time*1.7l)/100;
+  68   1      
+  69   1        return(S);//float型数据,单位为cm
+  70   1      }
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  3 ERROR(S)

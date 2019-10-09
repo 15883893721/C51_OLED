@@ -1,0 +1,64 @@
+C51 COMPILER V9.60.0.0   SPI                                                               10/09/2019 09:31:56 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE SPI
+OBJECT MODULE PLACED IN .\Objects\SPI.obj
+COMPILER INVOKED BY: D:\workdone\keil5\c51&arm\C51\BIN\C51.EXE Src\SPI.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\Inc;.\Config)
+                    - DEBUG OBJECTEXTEND PRINT(.\Listings\SPI.lst) TABS(2) OBJECT(.\Objects\SPI.obj)
+
+line level    source
+
+   1          #include "SPI.h"
+   2          
+   3          /*********************OLED写数据************************************/ 
+   4          void OLED_WrDat_SPI(unsigned char dat)
+   5          {
+   6   1        unsigned char i;
+   7   1        OLED_DC=1;
+   8   1        for(i=0;i<8;i++) //发送一个八位数据 
+   9   1        {
+  10   2          if((dat << i) & 0x80)
+  11   2          {
+  12   3            OLED_SDA  = 1;
+  13   3          }
+  14   2          else  OLED_SDA  = 0;
+  15   2          OLED_SCL = 0;
+  16   2          OLED_SCL = 1;
+  17   2        }
+  18   1      }
+  19          
+  20            /*********************OLED写命令************************************/                   
+  21          void OLED_WrCmd_SPI (unsigned char cmd)
+  22          {
+  23   1        unsigned char i;
+  24   1        OLED_DC=0;
+  25   1        for(i=0;i<8;i++) //发送一个八位数据
+  26   1        {
+  27   2          if((cmd << i) & 0x80)
+  28   2          {
+  29   3            OLED_SDA  = 1;
+  30   3          }
+  31   2          else
+  32   2          {
+  33   3            OLED_SDA  = 0;
+  34   3          }
+  35   2          OLED_SCL = 0;
+  36   2          OLED_SCL = 1;
+  37   2        }
+  38   1      }
+  39          
+  40              
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     82    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
